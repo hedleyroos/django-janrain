@@ -6,5 +6,5 @@ class JanrainUser(models.Model):
     username   = models.CharField(max_length=512, blank=False)
     provider   = models.CharField(max_length=64, blank=False)
     identifier = models.URLField(max_length=512, blank=False)
-    avatar     = models.URLField(max_length=512, blank=True)
+    avatar     = models.URLField(max_length=512, blank=True, null=True)
     url        = models.URLField(max_length=512, blank=True)
