@@ -1,3 +1,6 @@
+"""Partial implementation of
+http://developers.janrain.com/documentation/api-methods/engage/"""
+
 from django.conf import settings
 
 import urllib

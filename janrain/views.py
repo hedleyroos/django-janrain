@@ -9,6 +9,7 @@ from janrain import api
 from janrain.models import JanrainUser
 from janrain.signals import *
 
+
 @csrf_exempt
 def login(request):
     pre_login.send(JanrainSignal, request=request)
@@ -16,13 +17,13 @@ def login(request):
         token = request.POST['token']
     except KeyError:
         # TODO: set ERROR to something
-        login_failure.send(JanrainSignal, message='Error retreiving token', data=None)
+        login_failure.send(JanrainSignal, message='Error retrieving token', data=None)
         return HttpResponseRedirect('/')
 
     try:
         profile = api.auth_info(token)
     except api.JanrainAuthenticationError:
-        login_failure.send(JanrainSignal, message='Error retreiving profile', data=None)
+        login_failure.send(JanrainSignal, message='Error retrieving profile', data=None)
         return HttpResponseRedirect('/')
     post_profile_data.send(JanrainSignal, profile_data=profile)
 
@@ -54,6 +55,7 @@ def login(request):
         redirect = '/'
     return HttpResponseRedirect(redirect)
 
+
 def logout(request):
     pre_logout.send(JanrainSignal, request=request)
     auth.logout(request)
@@ -63,6 +65,7 @@ def logout(request):
     except IndexError:
         redirect = '/'
     return HttpResponseRedirect(redirect)
+
 
 def loginpage(request):
     context = {'next':request.GET.get('next', '/')}

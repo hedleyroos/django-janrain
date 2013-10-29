@@ -8,6 +8,9 @@ setup(
     description='Django integration of Janrain authentication system.',
     url='http://github.com/spuriousdata/django-janrain',
     packages=find_packages(),
+    install_requires = [
+        'requests',
+    ],
     include_package_data=True,
     classifiers=[
         "Development Status :: 4 - Beta",
