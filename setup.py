@@ -10,6 +10,7 @@ setup(
     packages=find_packages(),
     install_requires = [
         'requests',
+        'django-celery',
     ],
     include_package_data=True,
     classifiers=[
