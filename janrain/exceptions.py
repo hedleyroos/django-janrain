@@ -1,0 +1,2 @@
+class JanrainCaptureUpdateException(Exception):
+    pass
