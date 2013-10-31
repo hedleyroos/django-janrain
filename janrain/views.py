@@ -32,14 +32,12 @@ def login(request):
     u = auth.authenticate(profile=p)
     post_authenticate.send(JanrainSignal, user=u, profile_data=profile)
 
-    juser = JanrainUser.objects.get_or_create(
-                user=u,
-                username=p.get('preferredUsername'),
-                provider=p.get('providerName').lower(),
-                identifier=p.get('identifier'),
-                avatar=p.get('photo'),
-                url=p.get('url'),
-            )[0]
+    juser, created = JanrainUser.objects.get_or_create(user=u)
+    juser.username = p.get('preferredUsername'),
+    juser.provider = p.get('providerName').lower()
+    juser.identifier = p.get('identifier')
+    juser.avatar = p.get('photo')
+    juser.url = p.get('url')
     juser.save()
     post_janrain_user.send(JanrainSignal, janrain_user=juser, profile_data=profile)
 

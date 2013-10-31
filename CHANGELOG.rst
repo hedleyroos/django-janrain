@@ -3,5 +3,6 @@ Changelog
 
 next
 ----
-#. Allow avatar field to be null.
+#. Add support for Janrain Capture.
+#. `JanrainUser` now models both oth Janrain Engage and Janrain Capture data.
 
