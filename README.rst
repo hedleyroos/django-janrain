@@ -47,7 +47,7 @@ Configure your ``token_url`` in janrain to be http://yoursite.com/janrain/login/
 Create a template called ``janrain/loginpage.html`` to contain your janrain
 login iframe::
 
-    <iframe src="http://yoursite-test.rpxnow.com/openid/embed?token_url=http{% if request.is_secure %}s{%endif %}://{{ request.META.HTTP_HOST }}/janrain/login/?next=/"
+    <iframe src="http://yoursite-test.rpxnow.com/openid/embed?token_url=http{% if request.is_secure %}s{%endif %}://{{ request.META.HTTP_HOST }}/janrain/login/?next={{ request.GET.next|urlencode }}"
             scrolling="no" frameBorder="no" allowtransparency="true" style="width:400px; height:240px;">
     </iframe>
 
@@ -55,7 +55,7 @@ Place your javascript overlay sign in buttons in your template::
 
     <a class="rpxnow"
        onclick="return false;"
-       href="https://yoursite.rpxnow.com/openid/v2/signin?token_url=http{% if request.is_secure %}s{%endif %}://{{ request.META.HTTP_HOST }}/janrain/login/?next=/">
+       href="https://yoursite.rpxnow.com/openid/v2/signin?token_url=http{% if request.is_secure %}s{%endif %}://{{ request.META.HTTP_HOST }}/janrain/login/?next={{ request.GET.next|urlencode }}">
         Sign In
     </a>
 

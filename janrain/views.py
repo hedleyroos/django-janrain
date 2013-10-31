@@ -46,22 +46,24 @@ def login(request):
         auth.login(request, u)
         post_login.send(JanrainSignal, user=u, profile_data=profile)
 
+    next = request.GET.get('next', '/')
     try:
         redirect = pre_redirect.send(JanrainSignal, type='login',
-                redirect=request.GET.get('next', '/'))[-1][1]
+                redirect=next)[-1][1]
     except IndexError:
-        redirect = '/'
+        redirect = next
     return HttpResponseRedirect(redirect)
 
 
 def logout(request):
     pre_logout.send(JanrainSignal, request=request)
     auth.logout(request)
+    next = request.GET.get('next', '/')
     try:
         redirect = pre_redirect.send(JanrainSignal, type='logout',
-                redirect=request.GET.get('next', '/'))[-1][1]
+                redirect=next)[-1][1]
     except IndexError:
-        redirect = '/'
+        redirect = next
     return HttpResponseRedirect(redirect)
 
 
