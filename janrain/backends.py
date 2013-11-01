@@ -7,28 +7,37 @@ class JanrainBackend(object):
     supports_anonymous_user = False
 
     def authenticate(self, profile):
-        # django.contrib.auth.models.User.username is required and 
-        # has a max_length of 30 so to ensure that we don't go over 
-        # 30 characters we base64 encode the sha1 of the identifier 
-        # returned from janrain 
-        hashed_user = b64encode(sha1(profile['identifier']).digest())
-        try :
-            u = User.objects.get(username=hashed_user)
-        except User.DoesNotExist:
+        """During first authentication the User.username is a hash and the
+        JanrainUser object does not yet exist, so provide a fallback. We
+        authenticate against JanrainUser because that allows the User.username
+        to be set to a human readable string."""
 
-            fn, ln = self.get_name_from_profile(profile)
-            u = User(
-                    username=hashed_user,
-                    password='',
-                    first_name=fn,
-                    last_name=ln,
-                    email=self.get_email(profile)
-                )
-            u.set_unusable_password()
-            u.is_active = True
-            u.is_staff = False
-            u.is_superuser = False
-            u.save()
+        try :
+            ju = JanrainUser.objects.get(identifier=profile['identifier'])
+            u = ju.user
+        except JanrainUser.DoesNotExist:
+            # django.contrib.auth.models.User.username is required and
+            # has a max_length of 30 so to ensure that we don't go over
+            # 30 characters we base64 encode the sha1 of the identifier
+            # returned from janrain
+            hashed_user = b64encode(sha1(profile['identifier']).digest())
+            try :
+                u = User.objects.get(username=hashed_user)
+            except User.DoesNotExist:
+
+                fn, ln = self.get_name_from_profile(profile)
+                u = User(
+                        username=hashed_user,
+                        password='',
+                        first_name=fn,
+                        last_name=ln,
+                        email=self.get_email(profile)
+                    )
+                u.set_unusable_password()
+                u.is_active = True
+                u.is_staff = False
+                u.is_superuser = False
+                u.save()
         return u
 
     def get_user(self, uid):

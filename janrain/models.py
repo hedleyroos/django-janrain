@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class JanrainUser(models.Model):
     """Model for both Janrain Engage and Janrain Capture data"""
     user       = models.ForeignKey(User, unique=True, related_name='janrain_user')
-    username   = models.CharField(max_length=512, blank=True, null=True),
+    username   = models.CharField(max_length=512, blank=True, null=True)
     provider   = models.CharField(max_length=64, blank=True, null=True)
     identifier = models.URLField(max_length=512, blank=True, null=True)
     avatar     = models.URLField(max_length=512, blank=True, null=True)

@@ -8,9 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'JanrainUser.username'
-        db.delete_column('janrain_janrainuser', 'username')
-
         # Adding field 'JanrainUser.uuid'
         db.add_column('janrain_janrainuser', 'uuid',
                       self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True),
@@ -29,14 +26,15 @@ class Migration(SchemaMigration):
         # Changing field 'JanrainUser.identifier'
         db.alter_column('janrain_janrainuser', 'identifier', self.gf('django.db.models.fields.URLField')(max_length=512, null=True))
 
+        # Changing field 'JanrainUser.avatar'
+        db.alter_column('janrain_janrainuser', 'avatar', self.gf('django.db.models.fields.URLField')(max_length=512, null=True))
+
+        # Changing field 'JanrainUser.username'
+        db.alter_column('janrain_janrainuser', 'username', self.gf('django.db.models.fields.URLField')(max_length=512, null=True))
+
     def backwards(self, orm):
         # Removing unique constraint on 'JanrainUser', fields ['user']
         db.delete_unique('janrain_janrainuser', ['user_id'])
-
-        # Adding field 'JanrainUser.username'
-        db.add_column('janrain_janrainuser', 'username',
-                      self.gf('django.db.models.fields.CharField')(default=None, max_length=512),
-                      keep_default=False)
 
         # Deleting field 'JanrainUser.uuid'
         db.delete_column('janrain_janrainuser', 'uuid')
@@ -50,6 +48,12 @@ class Migration(SchemaMigration):
 
         # Changing field 'JanrainUser.identifier'
         db.alter_column('janrain_janrainuser', 'identifier', self.gf('django.db.models.fields.URLField')(default=None, max_length=512))
+
+        # Changing field 'JanrainUser.avatar'
+        db.alter_column('janrain_janrainuser', 'avatar', self.gf('django.db.models.fields.URLField')(default='', max_length=512))
+
+        # Changing field 'JanrainUser.username'
+        db.alter_column('janrain_janrainuser', 'username', self.gf('django.db.models.fields.URLField')(default=None, max_length=512))
 
     models = {
         'auth.group': {
@@ -92,11 +96,13 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'JanrainUser'},
             'avatar': ('django.db.models.fields.URLField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'identifier': ('django.db.models.fields.URLField', [], {'max_length': '512', 'null': 'True'}),
-            'provider': ('django.db.models.fields.CharField', [], {'max_length': '64', 'null': 'True'}),
+            'identifier': ('django.db.models.fields.URLField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
+            'provider': ('django.db.models.fields.CharField', [], {'max_length': '64', 'null': 'True', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'janrain_user'", 'unique': 'True', 'to': "orm['auth.User']"}),
-            'uuid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
+            'uuid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'username': ('django.db.models.fields.URLField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'})
+
         }
     }
 

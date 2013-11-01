@@ -4,6 +4,7 @@ from django.contrib import auth
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.db import IntegrityError
 
 from janrain import api
 from janrain.models import JanrainUser
@@ -33,13 +34,24 @@ def login(request):
     post_authenticate.send(JanrainSignal, user=u, profile_data=profile)
 
     juser, created = JanrainUser.objects.get_or_create(user=u)
-    juser.username = p.get('preferredUsername'),
+    juser.username = p.get('preferredUsername')
     juser.provider = p.get('providerName').lower()
     juser.identifier = p.get('identifier')
     juser.avatar = p.get('photo')
     juser.url = p.get('url')
     juser.save()
     post_janrain_user.send(JanrainSignal, janrain_user=juser, profile_data=profile)
+
+    # The user's username is a hash initially to enable authentication before
+    # the JanrainUser object exists. Since the object now exists the username
+    # can be made human readable.
+    if juser.username and (u.username != juser.username):
+        u.username = juser.username
+        try:
+            u.save()
+        except IntegrityError:
+            # If username collides there is nothing we can do
+            pass
 
     if u is not None:
         request.user = u
