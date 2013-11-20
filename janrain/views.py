@@ -4,7 +4,7 @@ from django.contrib import auth
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db import IntegrityError
+from django.contrib.auth.models import User
 
 from janrain import api
 from janrain.models import JanrainUser
@@ -46,12 +46,9 @@ def login(request):
     # the JanrainUser object exists. Since the object now exists the username
     # can be made human readable.
     if juser.username and (u.username != juser.username):
-        u.username = juser.username
-        try:
+        if not User.objects.filter(username=juser.username).exists():
+            u.username = juser.username
             u.save()
-        except IntegrityError:
-            # If username collides there is nothing we can do
-            pass
 
     if u is not None:
         request.user = u
