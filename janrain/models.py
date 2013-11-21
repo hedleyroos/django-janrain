@@ -93,6 +93,6 @@ def on_user_saved(sender, **kwargs):
         try:
             update_janrain_capture_user(user)
         except (requests.exceptions.RequestException, JanrainCaptureUpdateException), exc:
-            logger.error("Cannot update user %s, exc=%s" % (user_id, exc))
+            logger.error("Cannot update user %s, exc=%s" % (user.id, exc))
     elif strategy == 'celery':
         janrain.tasks.update_janrain_capture_user.delay(user.id, klass=user.__class__)

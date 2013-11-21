@@ -54,4 +54,6 @@ def update_janrain_capture_user(user):
         )
         result = simplejson.loads(response.content)
         if result['stat'] != 'ok':
-            raise JanrainCaptureUpdateException("Return stat %s" % result['stat'])
+            raise JanrainCaptureUpdateException(
+                "Return stat %s, detail = %s" % (result['stat'], str(result))
+            )
