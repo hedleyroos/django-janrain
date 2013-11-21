@@ -34,7 +34,14 @@ def user_to_janrain_capture_dict(user):
             func = fm.get('function', None)
             if func:
                 value = func(value)
-            result[fm['name']] = value
+            # Plurals are dot delimited
+            parts = fm['name'].split('.')
+            key = parts[0]
+            if len(parts) == 1:
+                result[key] = value
+            else:
+                result.setdefault(key, {})
+                result[key][parts[1]] = value
 
     return result
 
@@ -54,6 +61,4 @@ def update_janrain_capture_user(user):
         )
         result = simplejson.loads(response.content)
         if result['stat'] != 'ok':
-            raise JanrainCaptureUpdateException(
-                "Return stat %s, detail = %s" % (result['stat'], str(result))
-            )
+            raise JanrainCaptureUpdateException("Return stat %s, detail = %s" % (result['stat'], str(result)))
