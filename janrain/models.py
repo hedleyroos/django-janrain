@@ -41,7 +41,17 @@ def on_user_logged_in(sender, **kwargs):
 
     user = kwargs['user']
 
-    if not user.janrain_user.exists():
+    # Users added by Engage also need to end up in Capture. These users have a
+    # JainrainUser object with an empty uuid value initially. Normal users
+    # have no JanrainUser object at all initially.
+    janrain_user = None
+    uuid = None
+    qs = user.janrain_user.all()
+    if qs.exists():
+        janrain_user = qs[0]
+        uuid = janrain_user.uuid
+
+    if not uuid:
         data = BASE_CAPTURE_DATA.copy()
         data['attributes'] = simplejson.dumps(user_to_janrain_capture_dict(user))
         # See http://developers.janrain.com/documentation/api-methods/capture/entity/create-2/
@@ -56,7 +66,11 @@ def on_user_logged_in(sender, **kwargs):
         else:
             result = simplejson.loads(response.content)
             if result['stat'] == 'ok':
-                janrain_user = JanrainUser.objects.create(user=user, uuid=result['uuid'])
+                if not janrain_user:
+                    janrain_user = JanrainUser.objects.create(user=user, uuid=result['uuid'])
+                else:
+                    janrain_user.uuid = result['uuid']
+                    janrain_user.save()
             else:
                 logger.error("Cannot create user %s, stat=%s" % (user.id, result['stat']))
 
