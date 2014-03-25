@@ -58,7 +58,7 @@ def login(request):
     next = request.GET.get('next', '/')
     try:
         redirect = pre_redirect.send(JanrainSignal, type='login',
-                redirect=next)[-1][1]
+                redirect=next, request=request)[-1][1]
     except IndexError:
         redirect = next
     return HttpResponseRedirect(redirect)
@@ -70,7 +70,7 @@ def logout(request):
     next = request.GET.get('next', '/')
     try:
         redirect = pre_redirect.send(JanrainSignal, type='logout',
-                redirect=next)[-1][1]
+                redirect=next, request=request)[-1][1]
     except IndexError:
         redirect = next
     return HttpResponseRedirect(redirect)
