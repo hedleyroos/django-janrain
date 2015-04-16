@@ -18,8 +18,13 @@ def update_janrain_capture_user(id, klass=User):
     try:
         janrain.utils.update_janrain_capture_user(user)
     except JanrainCaptureUpdateException, exc:
-        logger.error("Cannot update user %s, exc=%s" % (id, exc))
-        raise update_janrain_capture_user.retry(exc=exc)
+        # If rate limit is hit back off
+        # todo: more elegant check
+        if 'api_limit_error' in str(exc):
+            raise update_janrain_capture_user.retry(exc=exc, countdown=3600)
+        else:
+            logger.error("Cannot update user %s, exc=%s" % (id, exc))
+            raise update_janrain_capture_user.retry(exc=exc)
     except requests.exceptions.RequestException:
         # This happens from time to time. Networks go down. No need to log.
         raise update_janrain_capture_user.retry(exc=exc)
