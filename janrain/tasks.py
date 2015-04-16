@@ -25,6 +25,6 @@ def update_janrain_capture_user(id, klass=User):
         else:
             logger.error("Cannot update user %s, exc=%s" % (id, exc))
             raise update_janrain_capture_user.retry(exc=exc)
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException, exc:
         # This happens from time to time. Networks go down. No need to log.
         raise update_janrain_capture_user.retry(exc=exc)
